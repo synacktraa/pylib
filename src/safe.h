@@ -46,7 +46,7 @@ struct Crate {
 /*
 struct to store vector and its size
 */
-typedef struct Crate ret;
+typedef struct Crate Crate;
 
 //========================================================
 
@@ -67,12 +67,12 @@ by string _Separator
 char* join(char** _Vector, size_t _Vecsize, char* _Separator);
 
 /*
-ret var = split(_String, _Delimeter);
+Crate var = split(_String, _Delimiter);
 _____________________________________
-split() splits the _String with _Delimeter
+split() splits the _String with _Delimiter
 and stores the elements in a vector
 */
-ret split(char* _String, char* _Delimeter);
+Crate split(char* _String, char* _Delimiter);
 
 /*
  char* var = readline(_Stream); 
@@ -97,15 +97,15 @@ char* input(char* _Prompt);
  _Bytes is greater than the size of file, it reads until EOF
  To read whole file pass -1 in _Bytes argument.
 */
-char* read(FILE* _Stream, size_t bytes);
+char* read(FILE* _Stream, long bytes);
 
 /*
- ret var = readlines(_Stream, _Count); 
+ Crate var = readlines(_Stream, _Count); 
  ___________________________________________________________________
  readlines() reads _Count no. of lines from the file and stores it
  in the array of strings and returns it, if _Count is greater than
  the no. of lines present in the file, it reads until EOF 
 */
-ret readlines(FILE* _Stream, size_t lines);
+Crate readlines(FILE* _Stream, size_t _Lines);
 
 #endif

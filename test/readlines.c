@@ -11,8 +11,9 @@ void display(size_t cnt, char** list) {
 
 int main(int argc, char** argv) {
 
+    (void)argc;
     FILE* in = fopen(argv[1], "r");
-    ret instance = readlines(in, 1024);
+    Crate instance = readlines(in, 10);
     display(instance.count, instance.vector);
     fclose(in);
     return 0;

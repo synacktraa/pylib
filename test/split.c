@@ -14,7 +14,7 @@ void display(size_t cnt, char** list) {
 int main(void) {
 
     char* str = "C language is a general-purpose programming language";
-    ret instance = split(str, "language");
+    Crate instance = split(str, "language");
     display(instance.count, instance.vector);
     return 0;
 }

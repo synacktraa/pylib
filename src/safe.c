@@ -93,7 +93,7 @@ static inline void* reallocate(void* _Buffer, size_t _Size) {
 }
 
 // -----extends vector size and allocates specified memory after extending---------------
-static inline void create(size_t space, ret *instance) {
+static inline void create(size_t space, Crate *instance) {
 
     instance->vector = (char**)reallocate(
         instance->vector, sizeof(char*)*(instance->count+1)
@@ -152,58 +152,69 @@ char* join(char** _Vector, size_t _VectorSize, char* _Separator){
 }
 
 /*
-ret var = split(_String, _Delimeter);
+Crate var = split(_String, _Delimiter);
 _____________________________________
-split() splits the _String with _Delimeter
+split() splits the _String with _Delimiter
 and stores the elements in a vector
 */
-ret split(char* _String, char* _Delimeter){
+Crate split(char* _String, char* _Delimiter){
 
-    if(!strcmp(_Delimeter, "")) {
+    if(!strcmp(_Delimiter, "")) {
         puts("ValueError: empty separator");
         exit(1);
     }
 
-    ret instance = {
+    Crate instance = {
         .vector = NULL,
         .count = 0
     };
 
     char* duplicate = strdup(_String);
     char* ptr = _String, *prev;
-    size_t  _Delim_len = strlen(_Delimeter);
+    size_t  _Delim_len = strlen(_Delimiter);
 
     /*
-        appends the string till the first occurence of delimeter
+        appends the string till the first occurence of delimiter
     */
     size_t size = 0;
-    if((ptr = strstr(ptr, _Delimeter)) != NULL)
+    if((ptr = strstr(ptr, _Delimiter)) != NULL){
         size = strlen(ptr);
-    
-    size_t skip = strlen(duplicate) - size;
-    create(skip, &instance);
-    strncpy(instance.vector[instance.count++], duplicate, skip);
+        prev = ptr++;
+    }    
+    size_t quantify = strlen(duplicate) - size;
+    create(quantify, &instance);
+    strncpy(
+        instance.vector[instance.count++],
+        duplicate, 
+        quantify
+    );
     free(duplicate);
 
     if(ptr == NULL)
         goto end;
-    prev = ptr++;
 
-    while ((ptr=strstr(ptr, _Delimeter))!=NULL) {
+    while ((ptr=strstr(ptr, _Delimiter))!=NULL) {
 
-        size_t calc = (strlen(prev)-strlen(ptr))-_Delim_len;
-        create(calc, &instance);
-        strncpy(instance.vector[instance.count++], prev+_Delim_len, calc);
+        quantify = (strlen(prev)-strlen(ptr))-_Delim_len;
+        create(quantify, &instance);
+        strncpy(
+            instance.vector[instance.count++],
+            prev+_Delim_len, 
+            quantify
+        );
         prev = ptr++;
     }
 
     /*
         appends rest of the string
     */
-    size_t rest = strlen(prev+_Delim_len);
-    create(rest, &instance);
-    strncpy(instance.vector[instance.count], prev+_Delim_len, rest);
-    instance.count++;
+    quantify = strlen(prev+_Delim_len);
+    create(quantify, &instance);
+    strncpy(
+        instance.vector[instance.count++], 
+        prev+_Delim_len, 
+        quantify
+    );
 
     end:
         push(instance.vector);
@@ -268,18 +279,18 @@ char* input(char* _Prompt) {
  _Bytes is greater than the size of file, it reads until EOF
  To read whole file pass -1 in _Bytes argument.
 */
-char* read(FILE* _Stream, size_t _Bytes) {
+char* read(FILE* _Stream, long _Bytes) {
 
     fseek(_Stream, 0, SEEK_END);
     // get file size
-    size_t t_Bytes = (size_t)ftell(_Stream);
+    long t_Bytes = ftell(_Stream);
     rewind(_Stream);
 
-    if(t_Bytes < _Bytes || (long)_Bytes == -1)
+    if(t_Bytes < _Bytes || _Bytes == -1)
         _Bytes = t_Bytes;
 
     void *data = allocate(1, _Bytes+1);
-    fread(data, 1, _Bytes, _Stream);
+    fread(data, 1, (size_t)_Bytes, _Stream);
 
     push(data);
     return (char*)data;
@@ -287,15 +298,15 @@ char* read(FILE* _Stream, size_t _Bytes) {
 
 
 /*
- ret var = readlines(_Stream, _Count); 
+ Crate var = readlines(_Stream, _Count); 
  ___________________________________________________________________
  readlines() reads _Count no. of lines from the file and stores it
  in the array of strings and returns it, if _Count is greater than
  the no. of lines present in the file, it reads until EOF 
 */
-ret readlines(FILE* _Stream, size_t _Count) {
+Crate readlines(FILE* _Stream, size_t _Count) {
 
-    ret instance = {
+    Crate instance = {
         .vector = (char**)allocate(_Count, sizeof(char*)),
     };
 

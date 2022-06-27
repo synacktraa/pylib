@@ -41,7 +41,7 @@ void display(size_t cnt, char** list) {
 int main(void) {
 
     char* str = "C language is a general-purpose programming language";
-    ret instance = split(str, "language");
+    Crate instance = split(str, "language");
     display(instance.count, instance.vector);
     return 0;
 }
@@ -100,7 +100,7 @@ void display(size_t cnt, char** list) {
 int main(void) {
 
     FILE* in = fopen("Makefile", "r");
-    ret instance = readlines(in, 1024);
+    Crate instance = readlines(in, 1024);
     display(instance.count, instance.vector);
     fclose(in);
     return 0;
