@@ -63,10 +63,10 @@ static inline void push(void* memloc) {
 }
 
 /*
- dalloc() | a static function which free all the 
+ dealloc() | a static function which free all the 
  allocated memory stored in vault
 */
-static void dalloc(void) {
+static void dealloc(void) {
 
     if(vault != NULL) {
 
@@ -75,8 +75,8 @@ static void dalloc(void) {
         }
         free(vault);
     }
-
 }
+
 
 static inline void* allocate(size_t _Count, size_t _Size) {
     void* tmp = calloc(_Count, _Size);
@@ -93,7 +93,7 @@ static inline void* reallocate(void* _Buffer, size_t _Size) {
 }
 
 // -----extends vector size and allocates specified memory after extending---------------
-static inline void create(size_t space, Crate *instance) {
+static inline void create(size_t space, cache_t *instance) {
 
     instance->vector = (char**)reallocate(
         instance->vector, sizeof(char*)*(instance->count+1)
@@ -112,17 +112,34 @@ _String with _Substitute
 */
 char* replace(char* _String, char* _Substring, char* _Substitute) {
 
-    char* res = strdup(_String);
-    char *ptr = _String;
-    size_t _Sub_len = strlen(_Substitute), _Substr_len = strlen(_Substring);
+    char* res = NULL, *ptr = _String;
+    size_t _Sub_len = strlen(_Substitute), 
+           _Substr_len = strlen(_Substring),
+           _Length = strlen(_String);
 
-    while ((ptr=strstr(ptr,_Substring))!=NULL) {
-        
-        size_t skip = strlen(res) - strlen(ptr), eval = strlen(ptr+_Substr_len);
-        res = (char*)reallocate(res, skip+_Sub_len+eval+1);
-        strcpy(res+skip, _Substitute);
-        strncat(res, ptr+_Substr_len, eval);
-        ptr++; 
+    if(!strcmp(_Substring, "")){
+        res = (char*)allocate(
+            1, 
+            _Length+ (_Length*_Sub_len) + 1
+        );
+
+        strcat(res, _Substitute);
+        for(size_t idx = 0; idx < _Length; idx++) {
+            strncat(res, _String+idx, 1);
+            strcat(res, _Substitute);
+        }
+    }
+
+    else{
+        res = strdup(_String);
+        while ((ptr=strstr(ptr,_Substring))!=NULL) {
+            
+            size_t skip = strlen(res) - strlen(ptr), eval = strlen(ptr+_Substr_len);
+            res = (char*)reallocate(res, skip+_Sub_len+eval+1);
+            strcpy(res+skip, _Substitute);
+            strncat(res, ptr+_Substr_len, eval);
+            ptr++; 
+        }
     }
     push(res);
     return res;
@@ -137,37 +154,37 @@ by string _Separator
 char* join(char** _Vector, size_t _VectorSize, char* _Separator){
 
     char* string = (char*)allocate(1, 1);
-    size_t idx, seplen = strlen(_Separator);
+    size_t idx, _Seplen = strlen(_Separator);
     for(idx = 0; idx < _VectorSize; idx++) {
 
-        size_t len = strlen(string), add = strlen(_Vector[idx]);
-        string = (char*)reallocate(string, len+add+seplen+1);
+        size_t _Length = strlen(string), _ElementSize = strlen(_Vector[idx]);
+        string = (char*)reallocate(string, _Length + _ElementSize + _Seplen+1);
 
-        strncat(string, _Vector[idx], add);
+        strncat(string, _Vector[idx], _ElementSize);
         if(idx+1 != _VectorSize)
-            strncat(string, _Separator, seplen);
+            strncat(string, _Separator, _Seplen);
     }
     push(string);
     return string;
 }
 
 /*
-Crate var = split(_String, _Delimiter);
+cache_t var = split(_String, _Delimiter);
 _____________________________________
 split() splits the _String with _Delimiter
 and stores the elements in a vector
 */
-Crate split(char* _String, char* _Delimiter){
+cache_t* split(char* _String, char* _Delimiter){
 
     if(!strcmp(_Delimiter, "")) {
         puts("ValueError: empty separator");
         exit(1);
     }
 
-    Crate instance = {
-        .vector = NULL,
-        .count = 0
-    };
+    cache_t *instance = (cache_t*)allocate(1, sizeof(cache_t));
+    push(instance);
+    instance->vector = NULL;
+    instance->count = 0;
 
     char* duplicate = strdup(_String);
     char* ptr = _String, *prev;
@@ -182,9 +199,9 @@ Crate split(char* _String, char* _Delimiter){
         prev = ptr++;
     }    
     size_t quantify = strlen(duplicate) - size;
-    create(quantify, &instance);
+    create(quantify, instance);
     strncpy(
-        instance.vector[instance.count++],
+        instance->vector[instance->count++],
         duplicate, 
         quantify
     );
@@ -196,9 +213,9 @@ Crate split(char* _String, char* _Delimiter){
     while ((ptr=strstr(ptr, _Delimiter))!=NULL) {
 
         quantify = (strlen(prev)-strlen(ptr))-_Delim_len;
-        create(quantify, &instance);
+        create(quantify, instance);
         strncpy(
-            instance.vector[instance.count++],
+            instance->vector[instance->count++],
             prev+_Delim_len, 
             quantify
         );
@@ -209,15 +226,15 @@ Crate split(char* _String, char* _Delimiter){
         appends rest of the string
     */
     quantify = strlen(prev+_Delim_len);
-    create(quantify, &instance);
+    create(quantify, instance);
     strncpy(
-        instance.vector[instance.count++], 
+        instance->vector[instance->count++], 
         prev+_Delim_len, 
         quantify
     );
 
     end:
-        push(instance.vector);
+        push(instance->vector);
         return instance;
 }
 
@@ -252,7 +269,10 @@ char* readline(FILE* _Stream) {
     buffer[cursor] = '\0'; // null termination
 
     // Minimize buffer
-    buffer = (char*)reallocate(buffer, strlen(buffer)+1);
+    buffer = (char*)reallocate(
+        buffer, 
+        strlen(buffer)+1
+    );
 
     push(buffer);
     return buffer;
@@ -298,25 +318,41 @@ char* read(FILE* _Stream, long _Bytes) {
 
 
 /*
- Crate var = readlines(_Stream, _Count); 
+ cache_t var = readlines(_Stream, _Count); 
  ___________________________________________________________________
  readlines() reads _Count no. of lines from the file and stores it
  in the array of strings and returns it, if _Count is greater than
  the no. of lines present in the file, it reads until EOF 
+  To read whole file pass -1 in _Count argument.
 */
-Crate readlines(FILE* _Stream, size_t _Count) {
+cache_t* readlines(FILE* _Stream, int _Count) {
 
-    Crate instance = {
-        .vector = (char**)allocate(_Count, sizeof(char*)),
-    };
+    cache_t *instance = (cache_t*)allocate(1, sizeof(cache_t));
+    push(instance);
+    instance->vector = NULL;
 
-    size_t lcnt = 0;
-    while(lcnt < _Count && !feof(_Stream)) {
-        instance.vector[lcnt++] = readline(_Stream);
+    int lcnt = 0;
+    if(_Count == -1) {
+        while(!feof(_Stream)){
+            instance->vector = (char**)reallocate(
+                instance->vector, 
+                sizeof(char*)*(lcnt+1)
+            );
+            instance->vector[lcnt++] = readline(_Stream);
+        }
+    } else {
+        while(lcnt < _Count && !feof(_Stream)) {
+            instance->vector = (char**)reallocate(
+                instance->vector, 
+                sizeof(char*)*(lcnt+1)
+            );
+            instance->vector[lcnt++] = readline(_Stream);
+        }
     }
-    instance.count = lcnt;
 
-    push(instance.vector);
+    instance->count = (size_t)lcnt;
+
+    push(instance->vector);
     return instance;
 }
 
@@ -351,6 +387,6 @@ INITIALIZER(init)
 {
     // Disable buffering for standard output
     setvbuf(stdout, NULL, _IONBF, 0);
-    // run dalloc() function before exiting the program
-    atexit(dalloc);
+    // run dealloc() function before exiting the program
+    atexit(dealloc);
 }

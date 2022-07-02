@@ -37,7 +37,7 @@
 /*
 struct to store vector and its size
 */
-struct Crate {
+struct cache {
 
     char** vector;
     size_t count;
@@ -46,7 +46,7 @@ struct Crate {
 /*
 struct to store vector and its size
 */
-typedef struct Crate Crate;
+typedef struct cache cache_t;
 
 //========================================================
 
@@ -67,13 +67,12 @@ by string _Separator
 char* join(char** _Vector, size_t _Vecsize, char* _Separator);
 
 /*
-Crate var = split(_String, _Delimiter);
+cache_t var = split(_String, _Delimiter);
 _____________________________________
 split() splits the _String with _Delimiter
 and stores the elements in a vector
 */
-Crate split(char* _String, char* _Delimiter);
-
+cache_t* split(char* _String, char* _Delimiter);
 /*
  char* var = readline(_Stream); 
  // stream can be stdin or a file pointer that has already been opened
@@ -100,12 +99,12 @@ char* input(char* _Prompt);
 char* read(FILE* _Stream, long bytes);
 
 /*
- Crate var = readlines(_Stream, _Count); 
+ cache_t var = readlines(_Stream, _Count); 
  ___________________________________________________________________
  readlines() reads _Count no. of lines from the file and stores it
  in the array of strings and returns it, if _Count is greater than
  the no. of lines present in the file, it reads until EOF 
 */
-Crate readlines(FILE* _Stream, size_t _Lines);
+cache_t* readlines(FILE* _Stream, int _Lines);
 
 #endif

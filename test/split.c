@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "../src/safe.h"
 
@@ -14,8 +15,8 @@ void display(size_t cnt, char** list) {
 int main(void) {
 
     char* str = "C language is a general-purpose programming language";
-    Crate instance = split(str, "language");
-    display(instance.count, instance.vector);
+    cache_t* instance = split(str, "language");
+    display(instance->count, instance->vector);
     return 0;
 }
 

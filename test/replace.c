@@ -2,10 +2,11 @@
 
 #include "../src/safe.h"
 
+
 int main(void) {
 
     char* str = "C language is a general-purpose programming language";
-    puts(replace(str, "language", "LANG"));
+    puts(replace(str, "", "h"));
     return 0;
 }
 

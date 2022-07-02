@@ -13,8 +13,8 @@ int main(int argc, char** argv) {
 
     (void)argc;
     FILE* in = fopen(argv[1], "r");
-    Crate instance = readlines(in, 10);
-    display(instance.count, instance.vector);
+    cache_t* instance = readlines(in, 10);
+    display(instance->count, instance->vector);
     fclose(in);
     return 0;
 }
