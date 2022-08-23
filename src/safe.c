@@ -169,6 +169,33 @@ char* join(char** _Vector, size_t _VectorSize, char* _Separator){
 }
 
 /*
+ * char* var = title(_String)
+ * ______________________________________________________________
+ * capitalizes the first letter of each word in the _String
+ */
+char* title(char* _String)
+{
+	int i;
+
+	for(i = 0; _String[i] != '\0'; i++)
+	{
+		if (_String[i] == ' ')
+		{
+			if (_String[i+1] > 96 && _String[i+1] < 123 )
+			{
+				_String[i+1] -= 32; 
+			}
+			else
+			{
+				continue;
+			}
+		}
+	}
+
+	return (_String);
+}
+
+/*
 cache_t var = split(_String, _Delimiter);
 _____________________________________
 split() splits the _String with _Delimiter

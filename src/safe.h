@@ -66,6 +66,13 @@ by string _Separator
 */
 char* join(char** _Vector, size_t _Vecsize, char* _Separator);
 
+/* 
+ char* var = title(_String)
+ ______________________________________________________________
+ title() capitalizes the first letter of each word in the _String
+*/
+
+char* title(char* _String);
 /*
 cache_t var = split(_String, _Delimiter);
 _____________________________________
