@@ -73,6 +73,14 @@ char* join(char** _Vector, size_t _Vecsize, char* _Separator);
 */
 
 char* title(char* _String);
+
+/*
+ * char* var = capitalize(_String)
+ * _____________________________________________________________
+ *capitalize() capitalizes the first letter of the String if it's
+ *an alphabet, then turns other characters in the string to lower case
+ */
+char* capitalize(char* _String);
 /*
 cache_t var = split(_String, _Delimiter);
 _____________________________________
