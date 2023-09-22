@@ -169,6 +169,92 @@ char* join(char** _Vector, size_t _VectorSize, char* _Separator){
 }
 
 /*
+ * char* var = capitalize(_String)
+ * ________________________________________________________________
+ * capitalizes the first Character in  a string if it's an alphabet
+ * then leaves turns all the other alphabets in the string to lower
+ * case
+ */
+char* capitalize(char* _String)
+{
+	int i;
+	for (i=0; _String[i] != '\0'; i++)
+	{
+		if (i==0)
+		{
+			if (_String[i] >= 'a' && _String[i] <= 'z')
+			{
+				_String[i] -= 32;
+			}
+			else
+			{
+				continue;
+			}
+		}
+		else
+		{
+			if (_String[i] >= 'A' && _String[i] <= 'Z')
+			{
+				_String[i] += 32;
+			}
+			else
+			{
+				continue;
+			}
+		}
+	}
+	return _String;
+}
+
+/*
+ * char* var = title(_String)
+ * ________________________________________________________________
+ * capitalizes the first letter of each word in the _String
+ */
+char* title(char* _String)
+{
+	int i,temp;
+
+	temp = 0;
+
+	for(i = 0; _String[i] != '\0'; i++)
+	{
+		if (_String[i] == ' ')
+		{
+			if (_String[i+1] >= 'a' && _String[i+1] <= 'z' )
+			{
+				_String[i+1] -= 32; 
+			}
+			else
+			{
+				continue;
+			}
+			temp = i+1;
+		}
+		else
+		{
+			if (i != temp)
+			{
+				if (_String[i] >= 'A' && _String[i] <= 'Z')
+				{
+					_String[i] += 32;
+				}
+				else
+				{
+					continue;
+				}
+			}
+			else
+			{
+				continue;
+			}
+		}
+	}
+
+	return (_String);
+}
+
+/*
 cache_t var = split(_String, _Delimiter);
 _____________________________________
 split() splits the _String with _Delimiter

@@ -1,3 +1,5 @@
+
+
 BIN=gcc
 CFLAGS=-g -Wall -Werror -Wextra
 SAFELIB=src/safe.c

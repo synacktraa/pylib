@@ -142,6 +142,34 @@ int main(void) {
     return 0;
 }
 ```
+
+### Title
+
+```c
+#include <stdio.h>
+#include "./src/safe.h"
+
+int main(void) {
+    
+       char str1[] = "C is a general-purpose language, 123";
+       printf("%s\n",title(str1));
+       return 0;
+    }
+
+ ```
+
+### Capitalize
+```c
+#include <stdio.h>
+#include "./src/safe.h"
+
+int main(void){
+	
+	char str1[] = "c IS A genERAL-PurPosE LanGuage"
+	printf("%s\n", title(str1));
+	return 0;
+}
+
 ---
 ## **TODO**
 
